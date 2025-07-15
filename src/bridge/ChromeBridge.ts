@@ -8,20 +8,20 @@ export class ChromeBridge extends BaseBrowserBridge {
       if (Notification.permission === 'granted') {
         const notification = new Notification(options.title, {
           body: options.body,
-          icon: options.icon || '/vite.svg',
+          icon: options.icon || './vite.svg',
           tag: options.tag,
           requireInteraction: options.requireInteraction,
           // Chrome 特有选项
           silent: false,
           renotify: true
         });
-        
+
         // Chrome 特定的事件处理
         notification.onclick = () => {
           window.focus();
           notification.close();
         };
-        
+
         return true;
       }
       return false;
@@ -30,7 +30,7 @@ export class ChromeBridge extends BaseBrowserBridge {
       return false;
     }
   }
-  
+
   async requestPermission(): Promise<string> {
     try {
       // Chrome 使用 Notification.requestPermission()

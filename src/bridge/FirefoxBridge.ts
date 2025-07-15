@@ -8,24 +8,24 @@ export class FirefoxBridge extends BaseBrowserBridge {
       if (Notification.permission === 'granted') {
         const notification = new Notification(options.title, {
           body: options.body,
-          icon: options.icon || '/vite.svg',
+          icon: options.icon || './vite.svg',
           tag: options.tag,
           // Firefox 特有选项
           dir: 'auto',
           lang: 'zh-CN'
         });
-        
+
         // Firefox 特定的事件处理
         notification.addEventListener('click', () => {
           window.focus();
           notification.close();
         });
-        
+
         // Firefox 自动关闭
         setTimeout(() => {
           notification.close();
         }, 5000);
-        
+
         return true;
       }
       return false;
@@ -34,7 +34,7 @@ export class FirefoxBridge extends BaseBrowserBridge {
       return false;
     }
   }
-  
+
   async requestPermission(): Promise<string> {
     try {
       // Firefox 使用 Notification.requestPermission()
