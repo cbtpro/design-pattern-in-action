@@ -5,7 +5,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'design-pattern-in-action',
+  base: './',
   server: {
     https: true,
     host: '0.0.0.0',

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { Layout } from './components/Layout';
@@ -10,9 +10,10 @@ import { PubSubPage } from './pages/PubSubPage';
 import { Patterns } from './pages/Patterns';
 
 function App() {
+  const basename = import.meta.env.BASE_URL.replace(/^\.\/$/, '/');
   return (
     <Provider store={store}>
-      <Router>
+      <Router basename={basename}>
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
