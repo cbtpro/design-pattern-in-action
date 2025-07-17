@@ -2,64 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { addIcon, removeIcon, clearIcons, updateMemoryUsage } from '../store/slices/flyweightSlice';
-import { IconFlyweightFactory, IconContext } from '../patterns/flyweight/IconFlyweight';
+import { IconFlyweightFactory } from '../patterns/flyweight/IconFlyweight';
+import { getIconContext } from '../patterns/flyweight/singletonIconContext';
 import { Layers, Plus, Trash2, BarChart3 } from 'lucide-react';
 
 export const FlyweightDemo: React.FC = () => {
   const dispatch = useDispatch();
   const { icons, memoryUsage } = useSelector((state: RootState) => state.flyweight);
-  const [iconContext] = useState(new IconContext());
-  const [selectedIconType, setSelectedIconType] = useState('home');
-  
-  const iconTypes = ['home', 'user', 'star', 'heart', 'bell'];
+  const iconContext = getIconContext();
+  const [selectedIconType, setSelectedIconType] = useState('首页');
+
+  const iconTypes = ['首页', '用户', '星星', '爱心', '铃铛'];
   const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6'];
-  
+
   useEffect(() => {
     // 更新内存使用情况
     const usage = iconContext.getMemoryUsage();
     dispatch(updateMemoryUsage(usage));
   }, [icons.length, dispatch, iconContext]);
-  
+
   const handleAddIcon = () => {
     const x = Math.random() * 400;
     const y = Math.random() * 200;
     const size = 20 + Math.random() * 20;
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    
+    const idx = iconTypes.indexOf(selectedIconType);
+    const color = colors[idx];
+
     const id = iconContext.addIcon(selectedIconType, x, y, size, color);
-    
     dispatch(addIcon({
       id,
       type: selectedIconType,
-      context: { x, y, size, color }
+      context: { id, x, y, size, color }
     }));
   };
-  
   const handleRemoveIcon = (id: string) => {
     iconContext.removeIcon(id);
     dispatch(removeIcon(id));
   };
-  
+
   const handleClearIcons = () => {
     iconContext.getIcons().forEach(icon => iconContext.removeIcon(icon.id));
     dispatch(clearIcons());
+    IconFlyweightFactory.removeAll();
   };
-  
+
   const formatBytes = (bytes: number) => {
     return `${bytes} bytes`;
   };
-  
-  const savingsPercentage = memoryUsage.withoutFlyweight > 0 
+
+  const savingsPercentage = memoryUsage.withoutFlyweight > 0
     ? Math.round((1 - memoryUsage.withFlyweight / memoryUsage.withoutFlyweight) * 100)
     : 0;
-  
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
       <div className="flex items-center space-x-2 mb-4">
         <Layers className="text-blue-400" size={24} />
         <h2 className="text-xl font-semibold text-white">享元模式演示</h2>
       </div>
-      
+
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-700 rounded-lg p-4">
@@ -82,7 +83,7 @@ export const FlyweightDemo: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gray-700 rounded-lg p-4">
             <h3 className="text-white font-medium mb-2">统计信息</h3>
             <div className="space-y-2 text-sm">
@@ -96,7 +97,7 @@ export const FlyweightDemo: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gray-700 rounded-lg p-4">
             <h3 className="text-white font-medium mb-2">控制面板</h3>
             <div className="space-y-2">
@@ -130,10 +131,10 @@ export const FlyweightDemo: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-gray-700 rounded-lg p-4">
           <h3 className="text-white font-medium mb-3">图标画布</h3>
-          <div 
+          <div
             className="relative bg-gray-600 rounded border-2 border-dashed border-gray-500 overflow-hidden"
             style={{ height: '250px' }}
           >
@@ -149,11 +150,13 @@ export const FlyweightDemo: React.FC = () => {
                 }}
                 onClick={() => handleRemoveIcon(icon.id)}
                 title={`${icon.type} - 点击删除`}
+                dangerouslySetInnerHTML={{
+                  __html: IconFlyweightFactory.getFlyweight(icon.type).render({
+                    ...icon.context,
+                  })
+                }}
               >
-                <div
-                  className="w-full h-full rounded"
-                  style={{ backgroundColor: icon.context.color }}
-                />
+
               </div>
             ))}
             {icons.length === 0 && (
@@ -163,7 +166,7 @@ export const FlyweightDemo: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         <div className="bg-gray-700 rounded-lg p-4">
           <h3 className="text-white font-medium mb-2">享元模式说明</h3>
           <p className="text-gray-300 text-sm">

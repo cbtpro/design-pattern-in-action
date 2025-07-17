@@ -58,18 +58,6 @@ class IconContext {
     this.icons.push({ id, type, x, y, size, color });
     return id;
   }
-  
-  renderAll(): string {
-    return this.icons.map(icon => {
-      const flyweight = IconFlyweightFactory.getFlyweight(icon.type);
-      return flyweight.render({
-        x: icon.x,
-        y: icon.y,
-        size: icon.size,
-        color: icon.color
-      });
-    }).join('');
-  }
 }`;
 
   const usageCode = `// 使用示例

@@ -58,6 +58,7 @@ export interface BrowserState {
   supportedFeatures: string[];
 }
 export interface IIconContext {
+  id: string;
   x: number;
   y: number;
   size: number;

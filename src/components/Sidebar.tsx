@@ -80,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   };
 
   return (
-    <div className={`bg-gray-800 border-r border-gray-700 transition-all duration-300 ${isCollapsed ? 'w-18' : 'w-64'
+    <div className={`bg-gray-800 border-r border-gray-700 transition-all duration-300 ${isCollapsed ? '' : 'w-64'
       }`}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!isCollapsed && (
